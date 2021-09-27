@@ -44,12 +44,12 @@ get_ptx_data <- function (app_id, app_key, url){
 }
 
 # 請在以下網站申請APPID和APPKEY
-# https://ptx.transportdata.tw/PTX/Management/AccountApply
 app_id = 'APPID'
 app_key = 'APPKEY'
 
 
 # 當日時刻表資料
+# https://ptx.transportdata.tw/PTX/Management/AccountApply
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/Today?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
 
@@ -147,6 +147,7 @@ HSR_sch_rev=reshape2::melt(HSR_sch, id.vars=c("TrainNo","Direction","StartingSta
   mutate(Time=as.numeric(substr(Time, 1, 2))*60+as.numeric(substr(Time, 4, 5)))
 
 
+
 ggplotly(
   p=ggplot()+
     geom_line(data=HSR_sch_rev, aes(x=Time, y=cumdist, group=TrainNo, color=as.character(substr(TrainNo, 2, 2))))+
@@ -165,8 +166,6 @@ ggplotly(
 )
 
 
-png("./train_diagram_0927.png", width=1551*2, height=770*2, res=220)
-print(p)
-dev.off()
+
 
 
