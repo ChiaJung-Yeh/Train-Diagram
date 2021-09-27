@@ -20,15 +20,10 @@ windowsFonts(B=windowsFont("標楷體"))
 
 # PTX api
 get_ptx_data <- function (app_id, app_key, url){
-  # Set the locale of Liniux
   Sys.setlocale("LC_ALL","C")
   
-  # "Tue, 21 Aug 2018 01:18:42 GMT"
   xdate <- format(as.POSIXlt(Sys.time(), tz = "GMT"), "%a, %d %b %Y %H:%M:%S GMT")
   sig <- hmac_sha1(app_key, paste("x-date:", xdate)) 
-  
-  # hmac username="APP ID", algorithm="hmac-sha1", headers="x-date", 
-  # signature="Base64(HMAC-SHA1("x-date: " + x-date , APP Key))"
   
   authorization <- paste0(
     'hmac username="', app_id, '", ',
@@ -43,21 +38,18 @@ get_ptx_data <- function (app_id, app_key, url){
   dat <- GET(url, 
              config = httr::config(ssl_verifypeer = 0L), 
              add_headers(.headers = auth_header))
-  
   print(http_status(dat)$message)
-  
-  # Set back to origin locale
   Sys.setlocale(category = "LC_ALL", locale = "cht")
-  
-  # return(dat)
   return(content(dat))
 }
 
-app_id = '8f35504e01eb4a43abfd41c920955690'
-app_key = 'H9MfljykHDeGiifyr2zKJ0XsKFQ'
+# 請在以下網站申請APPID和APPKEY
+app_id = 'APPID'
+app_key = 'APPKEY'
 
 
 # 當日時刻表資料
+# https://ptx.transportdata.tw/PTX/Management/AccountApply
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/Today?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
 
@@ -156,9 +148,10 @@ HSR_sch_rev=reshape2::melt(HSR_sch, id.vars=c("TrainNo","Direction","StartingSta
 
 
 ggplotly(
-  ggplot()+
+  p=ggplot()+
     geom_line(data=HSR_sch_rev, aes(x=Time, y=cumdist, group=TrainNo, color=as.character(substr(TrainNo, 2, 2))))+
-    scale_color_manual(values=c("1"="#FFB5B5", "2"="#B9B973", "3"="#B9B9FF", "5"="#00CACA", "6"="#53FF53", "8"="#FFBB77"))+
+    scale_color_manual(values=c("1"="#FFB5B5", "2"="#B9B973", "3"="#B9B9FF", "5"="#00CACA", "6"="#53FF53", "8"="#FFBB77"),
+                       name="車號代碼\n(運行模式)")+
     geom_text(data=cumdist, aes(x=300, y=cumdist, label=StationName), family="B", size=5, fontface="bold")+
     scale_x_continuous(limits=c(300,1450), breaks=seq(360, 1410, 30),
                        labels=paste0(str_pad(seq(360, 1410, 30)%/%60, 2, side="left", pad="0"), ":", str_pad(seq(360, 1410, 30)%%60, 2, side="left", pad="0")))+
@@ -166,10 +159,14 @@ ggplotly(
     theme_minimal()+
     theme(axis.text.x=element_text(size=12, family="A", angle=90, face="bold"),
           axis.text.y=element_blank(),
-          axis.title=element_blank())
+          axis.title=element_blank(),
+          legend.title=element_text(size=15, family="B"),
+          legend.text=element_text(size=12, family="A"))
 )
 
 
-
+png("./train_diagram_0927.png", width=1551*2, height=770*2, res=220)
+print(p)
+dev.off()
 
 
