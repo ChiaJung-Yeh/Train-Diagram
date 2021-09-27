@@ -16,7 +16,7 @@ library(tmap)
 tmap_mode("view")
 
 windowsFonts(A=windowsFont("Times New Roman"))
-windowsFonts(B=windowsFont("º–∑¢≈È"))
+windowsFonts(B=windowsFont("Ê®ôÊ•∑È´î"))
 
 # PTX api
 get_ptx_data <- function (app_id, app_key, url){
@@ -43,13 +43,13 @@ get_ptx_data <- function (app_id, app_key, url){
   return(content(dat))
 }
 
-# Ω–¶b•H§U∫ÙØ∏•”Ω–APPID©MAPPKEY
+# Ë´ãÂú®‰ª•‰∏ãÁ∂≤Á´ôÁî≥Ë´ãAPPIDÂíåAPPKEY
+# https://ptx.transportdata.tw/PTX/Management/AccountApply
 app_id = 'APPID'
 app_key = 'APPKEY'
 
 
-# ∑Ì§ÈÆ…®Ë™Ì∏ÍÆ∆
-# https://ptx.transportdata.tw/PTX/Management/AccountApply
+# Áï∂Êó•ÊôÇÂàªË°®Ë≥áÊñô
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/Today?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
 
@@ -79,7 +79,7 @@ rm(HSR_info, HSR_sch_temp, sec_head, sec_tail, num_of_sch)
 
 
 
-# πœ∏Í∏ÍÆ∆ (≠p∫‚¶UØ∏¬I∂°∂Z¬˜)
+# ÂúñË≥áË≥áÊñô (Ë®àÁÆóÂêÑÁ´ôÈªûÈñìË∑ùÈõ¢)
 
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Station?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
@@ -102,7 +102,7 @@ HSR_shape_temp=mutate(HSR_shape_temp, Geometry=st_as_sfc(Geometry))%>%
   st_transform(crs=3826)
 
 
-# ßQ•ŒØ∏¬IµÙ§¡∏ÙΩu (•˝ß‰¥M®ÏØ∏¬IßÎºv¶b∏ÙΩu§W™∫¬I°A±N®‰¬XÆi´D±`≤”™¯™∫buffer°A∞µ¨∞§¡≥Œ§∏•Û°A≥Ã´·¶b¬^®˙®‰§§™∫linestring)
+# Âà©Áî®Á´ôÈªûË£ÅÂàáË∑ØÁ∑ö (ÂÖàÊâæÂ∞ãÂà∞Á´ôÈªûÊäïÂΩ±Âú®Ë∑ØÁ∑ö‰∏äÁöÑÈªûÔºåÂ∞áÂÖ∂Êì¥Â±ïÈùûÂ∏∏Á¥∞Èï∑ÁöÑbufferÔºåÂÅöÁÇ∫ÂàáÂâ≤ÂÖÉ‰ª∂ÔºåÊúÄÂæåÂú®Êì∑ÂèñÂÖ∂‰∏≠ÁöÑlinestring)
 nrst=st_nearest_points(HSR_station, HSR_shape_temp)
 on_line_all=st_cast(nrst, "POINT")
 buf_all=st_combine(st_buffer(on_line_all, 0.1))
@@ -111,7 +111,7 @@ rm(nrst, on_line_all, buf_all, HSR_shape_temp)
 
 HSR_shape=mutate(st_sf(HSR_shape), id=c(1:25))
 
-# ≠p∫‚&¿À¨d®Ωµ{º∆ (•—©Ûπœ∏Í§§ßt¶≥∫›¬I¶‹æ˜ºt™∫∏Ù¨q°A•≤∂∑±N®‰±∆∞£°A¨G≥]©w∏Ù¨q>2000§Ω§ÿ™Ã©|¨∞¿ÁπB∏Ù¨q)
+# Ë®àÁÆó&Ê™¢Êü•ÈáåÁ®ãÊï∏ (Áî±ÊñºÂúñË≥á‰∏≠Âê´ÊúâÁ´ØÈªûËá≥Ê©üÂª†ÁöÑË∑ØÊÆµÔºåÂøÖÈ†àÂ∞áÂÖ∂ÊéíÈô§ÔºåÊïÖË®≠ÂÆöË∑ØÊÆµ>2000ÂÖ¨Â∞∫ËÄÖÂ∞öÁÇ∫ÁáüÈÅãË∑ØÊÆµ)
 HSR_shape=mutate(HSR_shape, length=as.numeric(st_length(HSR_shape)))%>%
   filter(length>2000)
 
@@ -138,7 +138,7 @@ tm_shape(HSR_shape)+
 
 
 
-cumdist=data.frame(StationName=c(HSR_shape$StationName.x, "•™¿Á"), cumdist=c(0, cumsum(HSR_shape$length))/1000)
+cumdist=data.frame(StationName=c(HSR_shape$StationName.x, "Â∑¶Ááü"), cumdist=c(0, cumsum(HSR_shape$length))/1000)
 
 HSR_sch_rev=reshape2::melt(HSR_sch, id.vars=c("TrainNo","Direction","StartingStationName","EndingStationName","StopSequence","StationID","StationName"),
                            measure.vars=c("ArrivalTime","DepartureTime"))%>%
@@ -152,8 +152,7 @@ ggplotly(
   p=ggplot()+
     geom_line(data=HSR_sch_rev, aes(x=Time, y=cumdist, group=TrainNo, color=as.character(substr(TrainNo, 2, 2))))+
     scale_color_manual(values=c("1"="#FFB5B5", "2"="#B9B973", "3"="#B9B9FF", "5"="#00CACA", "6"="#53FF53", "8"="#FFBB77"),
-                       name="®Æ∏π•NΩX\n(πB¶Êº“¶°)")+
-    geom_text(data=cumdist, aes(x=300, y=cumdist, label=StationName), family="B", size=5, fontface="bold")+
+                       name="ËªäËôü‰ª£Á¢º\n(ÈÅãË°åÊ®°Âºèxt(data=cumdist, aes(x=300, y=cumdist, label=StationName), family="B", size=5, fontface="bold")+
     scale_x_continuous(limits=c(300,1450), breaks=seq(360, 1410, 30),
                        labels=paste0(str_pad(seq(360, 1410, 30)%/%60, 2, side="left", pad="0"), ":", str_pad(seq(360, 1410, 30)%%60, 2, side="left", pad="0")))+
     scale_y_reverse()+
