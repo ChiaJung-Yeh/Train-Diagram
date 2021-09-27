@@ -16,7 +16,7 @@ library(tmap)
 tmap_mode("view")
 
 windowsFonts(A=windowsFont("Times New Roman"))
-windowsFonts(B=windowsFont("¼Ð·¢Åé"))
+windowsFonts(B=windowsFont("æ¨™æ¥·é«”"))
 
 # PTX api
 get_ptx_data <- function (app_id, app_key, url){
@@ -57,7 +57,7 @@ app_id = '8f35504e01eb4a43abfd41c920955690'
 app_key = 'H9MfljykHDeGiifyr2zKJ0XsKFQ'
 
 
-# ·í¤é®É¨èªí¸ê®Æ
+# ç•¶æ—¥æ™‚åˆ»è¡¨è³‡æ–™
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/Today?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
 
@@ -87,7 +87,7 @@ rm(HSR_info, HSR_sch_temp, sec_head, sec_tail, num_of_sch)
 
 
 
-# ¹Ï¸ê¸ê®Æ (­pºâ¦U¯¸ÂI¶¡¶ZÂ÷)
+# åœ–è³‡è³‡æ–™ (è¨ˆç®—å„ç«™é»žé–“è·é›¢)
 
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/Station?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
@@ -110,7 +110,7 @@ HSR_shape_temp=mutate(HSR_shape_temp, Geometry=st_as_sfc(Geometry))%>%
   st_transform(crs=3826)
 
 
-# §Q¥Î¯¸ÂIµô¤Á¸ô½u (¥ý§ä´M¨ì¯¸ÂI§ë¼v¦b¸ô½u¤WªºÂI¡A±N¨äÂX®i«D±`²Óªøªºbuffer¡A°µ¬°¤Á³Î¤¸¥ó¡A³Ì«á¦bÂ^¨ú¨ä¤¤ªºlinestring)
+# åˆ©ç”¨ç«™é»žè£åˆ‡è·¯ç·š (å…ˆæ‰¾å°‹åˆ°ç«™é»žæŠ•å½±åœ¨è·¯ç·šä¸Šçš„é»žï¼Œå°‡å…¶æ“´å±•éžå¸¸ç´°é•·çš„bufferï¼Œåšç‚ºåˆ‡å‰²å…ƒä»¶ï¼Œæœ€å¾Œåœ¨æ“·å–å…¶ä¸­çš„linestring)
 nrst=st_nearest_points(HSR_station, HSR_shape_temp)
 on_line_all=st_cast(nrst, "POINT")
 buf_all=st_combine(st_buffer(on_line_all, 0.1))
@@ -119,7 +119,7 @@ rm(nrst, on_line_all, buf_all, HSR_shape_temp)
 
 HSR_shape=mutate(st_sf(HSR_shape), id=c(1:25))
 
-# ­pºâ&ÀË¬d¨½µ{¼Æ (¥Ñ©ó¹Ï¸ê¤¤§t¦³ºÝÂI¦Ü¾÷¼tªº¸ô¬q¡A¥²¶·±N¨ä±Æ°£¡A¬G³]©w¸ô¬q>2000¤½¤ØªÌ©|¬°Àç¹B¸ô¬q)
+# è¨ˆç®—&æª¢æŸ¥é‡Œç¨‹æ•¸ (ç”±æ–¼åœ–è³‡ä¸­å«æœ‰ç«¯é»žè‡³æ©Ÿå» çš„è·¯æ®µï¼Œå¿…é ˆå°‡å…¶æŽ’é™¤ï¼Œæ•…è¨­å®šè·¯æ®µ>2000å…¬å°ºè€…å°šç‚ºç‡Ÿé‹è·¯æ®µ)
 HSR_shape=mutate(HSR_shape, length=as.numeric(st_length(HSR_shape)))%>%
   filter(length>2000)
 
@@ -146,10 +146,10 @@ tm_shape(HSR_shape)+
 
 
 
-cumdist=data.frame(StationName=c(HSR_shape$StationName.x, "¥ªÀç"), cumdist=c(0, cumsum(HSR_shape$length))/1000)
+cumdist=data.frame(StationName=c(HSR_shape$StationName.x, "å·¦ç‡Ÿ"), cumdist=c(0, cumsum(HSR_shape$length))/1000)
 
 HSR_sch_rev=reshape2::melt(HSR_sch, id.vars=c("TrainNo","Direction","StartingStationName","EndingStationName","StopSequence","StationID","StationName"),
-     measure.vars=c("ArrivalTime","DepartureTime"))%>%
+                      sure.vars=c("ArrivalTime","DepartureTime"))%>%
   left_join(cumdist)%>%
   rename(A_D=variable, Time=value)%>%
   mutate(Time=as.numeric(substr(Time, 1, 2))*60+as.numeric(substr(Time, 4, 5)))
