@@ -44,12 +44,12 @@ get_ptx_data <- function (app_id, app_key, url){
 }
 
 # 請在以下網站申請APPID和APPKEY
+# https://ptx.transportdata.tw/PTX/Management/AccountApply
 app_id = 'APPID'
 app_key = 'APPKEY'
 
 
 # 當日時刻表資料
-# https://ptx.transportdata.tw/PTX/Management/AccountApply
 url="https://ptx.transportdata.tw/MOTC/v2/Rail/THSR/DailyTimetable/Today?&$format=XML"
 x=get_ptx_data(app_id, app_key, url)
 
